@@ -17,7 +17,7 @@
 #
 ##
 # Imports python modules
-from os import listdir
+from os import listdir, path
 
 def get_pet_labels(image_dir):
     """
@@ -41,20 +41,20 @@ def get_pet_labels(image_dir):
     
     # Create the results_dic
     results_dic = dict()
-    # Determines number of items in dictionary
-    items_in_dic = len(results_dic)
     
     # Adds new key-value pairs to dictionary ONLY when key doesn't already exist. 
     # This dictionary's value is a List that contains only one item - the pet image label
-    for idx in range(0, len(filename_list), 1):
-        if filename_list[idx] not in results_dic:
-            result = ''.join([i for i in filename_list[idx] if not i.isdigit()]).strip()
-            pet_label = result[:-5].replace('_', ' ').lower()
-            results_dic[filename_list[idx]] = [pet_label]
-        else:
-            print("** Warning: Key=", filenames[idx], 
-                  "already exists in results_dic with value =", 
-                  results_dic[filenames[idx]])
+    for idx in range(len(filename_list)):
+        if not filename_list[idx].startswith('.'):
+            if filename_list[idx] not in results_dic:
+                filename_no_ext = path.splitext(filename_list[idx])[0].lower()
+                result = ''.join([i for i in filename_no_ext if i.isalpha() or i == '_'])
+                pet_label = result.replace('_', ' ').strip()               
+                results_dic[filename_list[idx]] = [pet_label]
+            else:
+                print("** Warning: Key=", filenames[idx], 
+                      "already exists in results_dic with value =", 
+                      results_dic[filenames[idx]])
 
     # The results_dic dictionary that we created with this function
     return results_dic
